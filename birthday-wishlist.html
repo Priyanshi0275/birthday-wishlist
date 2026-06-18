@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎂 Priyanshi's Birthday Wishlist</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: rgba(255,255,255,0.04);
+    --surface-hover: rgba(255,255,255,0.07);
+    --border: rgba(255,255,255,0.08);
+    --border-bright: rgba(255,255,255,0.15);
+    --text: #f0f0f5;
+    --text-muted: #888899;
+    --text-dim: #555566;
+    --accent: #a78bfa;
+    --accent2: #f472b6;
+    --accent3: #34d399;
+    --glow: rgba(167,139,250,0.15);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  /* ── BALLOONS ── */
+  .balloons-container{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+  .balloon{
+    position:absolute;bottom:-80px;
+    width:28px;height:36px;border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+    animation:floatUp linear infinite;
+    opacity:0.18;
+  }
+  .balloon::after{content:'';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:1px;height:10px;background:currentColor;opacity:0.4;}
+  @keyframes floatUp{
+    0%{transform:translateY(0) rotate(0deg);opacity:0;}
+    10%{opacity:0.18;}
+    90%{opacity:0.18;}
+    100%{transform:translateY(-110vh) rotate(20deg);opacity:0;}
+  }
+  /* ── PROGRESS BAR ── */
+  .progress-wrap{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    height:3px;background:rgba(255,255,255,0.06);
+  }
+  .progress-bar{
+    height:100%;
+    background:linear-gradient(90deg,var(--accent),var(--accent2));
+    transition:width 0.5s cubic-bezier(.4,0,.2,1);
+    box-shadow:0 0 12px var(--accent);
+  }
+  /* ── SCREENS ── */
+  .screen{
+    display:none;
+    min-height:100vh;
+    padding:60px 24px 40px;
+    position:relative;
+    z-index:1;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+  }
+  .screen.active{display:flex;}
+  /* ── INTRO ── */
+  .intro-title{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:clamp(2.8rem,8vw,5rem);
+    font-weight:700;
+    text-align:center;
+    line-height:1.1;
+    background:linear-gradient(135deg,#fff 20%,var(--accent) 60%,var(--accent2));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    margin-bottom:16px;
+  }
+  .intro-sub{
+    font-size:1.1rem;color:var(--text-muted);text-align:center;
+    max-width:400px;line-height:1.7;margin-bottom:40px;
+  }
+  /* ── QUESTION CARD ── */
+  .q-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:24px;
+    padding:clamp(24px,5vw,48px);
+    max-width:600px;width:100%;
+    backdrop-filter:blur(24px);
+    -webkit-backdrop-filter:blur(24px);
+    box-shadow:0 0 0 1px rgba(255,255,255,0.03), 0 40px 80px rgba(0,0,0,0.4);
+    position:relative;
+    overflow:hidden;
+  }
+  .q-card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:1px;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent);
+    opacity:0.4;
+  }
+  .q-number{
+    font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:12px;
+  }
+  .q-title{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:clamp(1.4rem,4vw,1.9rem);font-weight:600;
+    line-height:1.3;margin-bottom:28px;color:var(--text);
+  }
+  /* ── OPTIONS GRID ── */
+  .options-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+    gap:10px;
+  }
+  .option-btn{
+    background:rgba(255,255,255,0.04);
+    border:1px solid var(--border);
+    border-radius:var(--radius-sm);
+    padding:14px 10px;
+    cursor:pointer;
+    transition:all 0.2s cubic-bezier(.4,0,.2,1);
+    text-align:center;
+    font-size:0.82rem;font-weight:500;color:var(--text-muted);
+    line-height:1.4;
+    position:relative;overflow:hidden;
+  }
+  .option-btn .emoji{display:block;font-size:1.6rem;margin-bottom:6px;}
+  .option-btn:hover{
+    background:var(--surface-hover);
+    border-color:var(--border-bright);
+    color:var(--text);
+    transform:translateY(-2px);
+    box-shadow:0 8px 24px rgba(0,0,0,0.3);
+  }
+  .option-btn.selected{
+    background:rgba(167,139,250,0.12);
+    border-color:var(--accent);
+    color:var(--accent);
+    box-shadow:0 0 20px rgba(167,139,250,0.15);
+  }
+  /* ── SLIDER ── */
+  .slider-wrap{margin-bottom:24px;}
+  .slider-value{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:3.5rem;font-weight:700;text-align:center;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    margin-bottom:16px;
+  }
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;
+    width:100%;height:5px;
+    background:linear-gradient(90deg,var(--accent) var(--pct,50%),rgba(255,255,255,0.1) var(--pct,50%));
+    border-radius:99px;outline:none;cursor:pointer;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;appearance:none;
+    width:24px;height:24px;border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 0 0 4px rgba(167,139,250,0.2), 0 4px 12px rgba(0,0,0,0.4);
+    transition:transform 0.15s;
+  }
+  input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.2);}
+  .slider-labels{display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--text-dim);}
+  /* ── RESPONSE CHIP ── */
+  .response-chip{
+    margin-top:20px;
+    padding:12px 18px;
+    background:rgba(167,139,250,0.08);
+    border:1px solid rgba(167,139,250,0.2);
+    border-radius:var(--radius-sm);
+    font-size:0.88rem;color:var(--accent);
+    animation:slideUp 0.3s cubic-bezier(.4,0,.2,1);
+    text-align:center;font-style:italic;
+  }
+  @keyframes slideUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+  /* ── NEXT BUTTON ── */
+  .btn-next{
+    margin-top:28px;
+    width:100%;padding:16px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    border:none;border-radius:var(--radius-sm);
+    color:#fff;font-size:1rem;font-weight:600;
+    cursor:pointer;
+    transition:all 0.2s;
+    letter-spacing:.02em;
+    font-family:'Inter',sans-serif;
+  }
+  .btn-next:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(167,139,250,0.35);}
+  .btn-next:active{transform:translateY(0);}
+  .btn-next:disabled{opacity:0.35;cursor:not-allowed;transform:none;}
+  /* ── LOADING ── */
+  .loading-screen{
+    text-align:center;
+  }
+  .loading-text{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:1.4rem;font-weight:600;color:var(--text-muted);
+    margin-top:24px;
+    min-height:2em;
+  }
+  .spinner{
+    width:60px;height:60px;margin:0 auto;
+    border:3px solid rgba(255,255,255,0.06);
+    border-top-color:var(--accent);
+    border-radius:50%;
+    animation:spin 0.8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  /* ── RESULTS ── */
+  .results-header{
+    text-align:center;max-width:640px;
+    margin-bottom:48px;
+  }
+  .results-eyebrow{
+    font-size:11px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:12px;
+  }
+  .results-title{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:clamp(2rem,5vw,3.2rem);font-weight:700;
+    line-height:1.2;
+    background:linear-gradient(135deg,#fff,var(--accent));
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    margin-bottom:16px;
+  }
+  .results-sub{font-size:1rem;color:var(--text-muted);line-height:1.7;}
+  /* ── GIFT GRID ── */
+  .gifts-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+    gap:20px;
+    max-width:900px;width:100%;
+    padding:0 4px;
+  }
+  .gift-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:20px;
+    overflow:hidden;
+    transition:all 0.25s cubic-bezier(.4,0,.2,1);
+    position:relative;
+  }
+  .gift-card:hover{
+    transform:translateY(-6px);
+    border-color:var(--border-bright);
+    box-shadow:0 24px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(167,139,250,0.1);
+  }
+  .gift-source{
+    display:inline-block;padding:4px 10px;margin-bottom:10px;
+    background:rgba(255,255,255,0.05);border:1px solid var(--border);
+    border-radius:99px;font-size:10px;font-weight:600;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--text-dim);
+  }
+  .gift-body{padding:22px;}
+  .gift-price{
+    font-size:11px;font-weight:600;letter-spacing:.1em;
+    color:var(--accent3);text-transform:uppercase;margin-bottom:6px;
+  }
+  .gift-name{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:1rem;font-weight:600;color:var(--text);
+    margin-bottom:6px;line-height:1.3;
+  }
+  .gift-desc{font-size:0.8rem;color:var(--text-muted);line-height:1.6;margin-bottom:16px;}
+  .btn-buy{
+    display:block;width:100%;padding:11px;
+    background:rgba(167,139,250,0.1);
+    border:1px solid rgba(167,139,250,0.25);
+    border-radius:var(--radius-sm);
+    color:var(--accent);font-size:0.85rem;font-weight:600;
+    text-decoration:none;text-align:center;
+    transition:all 0.2s;font-family:'Inter',sans-serif;
+    cursor:pointer;
+  }
+  .btn-buy:hover{background:rgba(167,139,250,0.18);border-color:var(--accent);}
+  /* ── CASH SECTION ── */
+  .cash-section{
+    margin-top:60px;text-align:center;
+    padding:40px 24px;
+    background:rgba(255,255,255,0.02);
+    border:1px solid var(--border);
+    border-radius:24px;
+    max-width:480px;width:100%;
+  }
+  .cash-section p{color:var(--text-muted);margin-bottom:20px;font-size:0.95rem;}
+  .btn-cash{
+    padding:16px 32px;
+    background:linear-gradient(135deg,#f59e0b,#ef4444);
+    border:none;border-radius:var(--radius-sm);
+    color:#fff;font-size:1.05rem;font-weight:700;
+    cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;
+    letter-spacing:.02em;
+  }
+  .btn-cash:hover{transform:scale(1.04);box-shadow:0 12px 32px rgba(245,158,11,0.3);}
+  .btn-rerun{
+    padding:12px 24px;
+    background:rgba(255,255,255,0.05);
+    border:1px solid var(--border-bright);
+    border-radius:var(--radius-sm);
+    color:var(--text-muted);font-size:0.88rem;font-weight:500;
+    cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;
+    letter-spacing:.01em;
+  }
+  .btn-rerun:hover{background:rgba(255,255,255,0.09);color:var(--text);border-color:rgba(255,255,255,0.25);}
+  .btn-rerun.secondary{color:var(--text-dim);}
+  .btn-rerun.secondary:hover{color:var(--text-muted);}
+  .cash-reveal{
+    margin-top:16px;font-size:0.9rem;color:var(--text-muted);
+    display:none;animation:slideUp 0.3s ease;
+    font-style:italic;
+  }
+  /* ── CONFETTI ── */
+  .confetti-piece{
+    position:fixed;pointer-events:none;z-index:999;
+    width:8px;height:8px;
+    animation:confettiFall linear forwards;
+  }
+  @keyframes confettiFall{
+    0%{transform:translateY(-10px) rotate(0deg);opacity:1;}
+    100%{transform:translateY(110vh) rotate(720deg);opacity:0;}
+  }
+  /* ── MISC ── */
+  .start-btn{
+    padding:18px 40px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    border:none;border-radius:var(--radius-sm);
+    color:#fff;font-size:1.1rem;font-weight:600;
+    cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;
+    letter-spacing:.02em;
+  }
+  .start-btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(167,139,250,0.35);}
+  .tag{
+    display:inline-block;padding:4px 12px;
+    background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);
+    border-radius:99px;font-size:11px;color:var(--accent);font-weight:600;
+    letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px;
+  }
+  .step-indicator{
+    display:flex;gap:6px;justify-content:center;margin-bottom:28px;
+  }
+  .step-dot{
+    width:6px;height:6px;border-radius:50%;
+    background:rgba(255,255,255,0.15);
+    transition:all 0.3s;
+  }
+  .step-dot.active{background:var(--accent);box-shadow:0 0 8px var(--accent);}
+  .step-dot.done{background:rgba(167,139,250,0.4);}
+  .nav-back{
+    position:fixed;top:20px;left:20px;z-index:200;
+    background:rgba(255,255,255,0.06);border:1px solid var(--border);
+    border-radius:99px;padding:8px 16px;
+    color:var(--text-muted);font-size:0.8rem;font-weight:500;
+    cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;
+    display:none;
+  }
+  .nav-back:hover{background:rgba(255,255,255,0.1);color:var(--text);}
+  @media(max-width:520px){
+    .options-grid{grid-template-columns:repeat(2,1fr);}
+    .gifts-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- Balloons -->
+<div class="balloons-container" id="balloons"></div>
+
+<!-- Progress Bar -->
+<div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
+
+<!-- Back Button -->
+<button class="nav-back" id="navBack" onclick="goBack()">← back</button>
+
+<!-- ═══════════════════════════════════
+     SCREEN 0 — INTRO
+═══════════════════════════════════ -->
+<div class="screen active" id="screen-0">
+  <div style="text-align:center;max-width:520px;">
+    <div class="tag">🎂 July 2</div>
+    <h1 class="intro-title">Priyanshi's<br>Birthday Wishlist</h1>
+    <p class="intro-sub">Before you see what I want,<br>let me figure out who you are first.</p>
+    <button class="start-btn" onclick="goTo(1)">Let's find out 🔮</button>
+    <p style="margin-top:16px;font-size:0.78rem;color:var(--text-dim);">5 quick questions · no wrong answers · probably.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     SCREEN 1 — How close are we?
+═══════════════════════════════════ -->
+<div class="screen" id="screen-1">
+  <div class="q-card">
+    <div class="step-indicator" id="steps-1"></div>
+    <div class="q-number">Question 01 / 05</div>
+    <h2 class="q-title">How close are we? 👀</h2>
+    <div class="options-grid" id="q1-options">
+      <button class="option-btn" onclick="selectQ1(this,'Best Friend','Expected. You already know what I want. Yet here you are.')" data-val="Best Friend">
+        <span class="emoji">👑</span>Best Friend
+      </button>
+      <button class="option-btn" onclick="selectQ1(this,'Partner','Bold move looking this up instead of just asking me.')" data-val="Partner">
+        <span class="emoji">❤️</span>Partner
+      </button>
+      <button class="option-btn" onclick="selectQ1(this,'Sibling','Unfortunately we\'re related. At least pretend to care.')" data-val="Sibling">
+        <span class="emoji">👯</span>Sibling
+      </button>
+      <button class="option-btn" onclick="selectQ1(this,'Parent','The bar is already high. No pressure though. Just kidding. Lots of pressure.')" data-val="Parent">
+        <span class="emoji">👨‍👩‍👧</span>Parent
+      </button>
+      <button class="option-btn" onclick="selectQ1(this,'Friend','Solid. Reliable. The kind of person who shows up. Sometimes.')" data-val="Friend">
+        <span class="emoji">🤝</span>Friend
+      </button>
+      <button class="option-btn" onclick="selectQ1(this,'Acquaintance','Bold of you to be here. We respect the audacity.')" data-val="Acquaintance">
+        <span class="emoji">😐</span>Acquaintance
+      </button>
+      <button class="option-btn" onclick="selectQ1(this,'Internet Friend','Never met IRL but you\'re still here. Parasocial king/queen.')" data-val="Internet Friend">
+        <span class="emoji">🌎</span>Internet Friend
+      </button>
+    </div>
+    <div id="q1-response"></div>
+    <button class="btn-next" id="next-1" onclick="goTo(2)" disabled>Continue →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     SCREEN 2 — Annoyance Slider
+═══════════════════════════════════ -->
+<div class="screen" id="screen-2">
+  <div class="q-card">
+    <div class="step-indicator" id="steps-2"></div>
+    <div class="q-number">Question 02 / 05</div>
+    <h2 class="q-title">How much did you annoy me this year? 😤</h2>
+    <div class="slider-wrap">
+      <div class="slider-value" id="annoyVal">50</div>
+      <input type="range" id="annoySlider" min="0" max="100" value="50" oninput="updateAnnoy(this.value)">
+      <div class="slider-labels"><span>Literal angel</span><span>Certified menace</span></div>
+    </div>
+    <div id="annoy-response" class="response-chip"></div>
+    <button class="btn-next" onclick="goTo(3)">Continue →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     SCREEN 3 — Budget (IMPORTANT)
+═══════════════════════════════════ -->
+<div class="screen" id="screen-3">
+  <div class="q-card">
+    <div class="step-indicator" id="steps-3"></div>
+    <div class="q-number">Question 03 / 05</div>
+    <h2 class="q-title">What's your budget?<br><span style="font-size:0.9rem;font-weight:400;color:var(--text-muted);">(this one actually matters)</span></h2>
+    <div class="options-grid" style="grid-template-columns:1fr 1fr;" id="q3-options">
+      <button class="option-btn" onclick="selectBudget(this,'under500')" data-val="under500">
+        <span class="emoji">🌱</span>Under ₹500
+      </button>
+      <button class="option-btn" onclick="selectBudget(this,'500-1000')" data-val="500-1000">
+        <span class="emoji">💚</span>₹500 – 1000
+      </button>
+      <button class="option-btn" onclick="selectBudget(this,'1000-2500')" data-val="1000-2500">
+        <span class="emoji">💙</span>₹1000 – 2500
+      </button>
+      <button class="option-btn" style="grid-column:1/-1;" onclick="selectBudget(this,'5000+')" data-val="5000+">
+        <span class="emoji">🔥</span>₹5000+ (and feeling bold about it)
+      </button>
+    </div>
+    <div id="q3-response"></div>
+    <button class="btn-next" id="next-3" onclick="goTo(4)" disabled>Continue →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     SCREEN 4 — Likelihood of buying
+═══════════════════════════════════ -->
+<div class="screen" id="screen-4">
+  <div class="q-card">
+    <div class="step-indicator" id="steps-4"></div>
+    <div class="q-number">Question 04 / 05</div>
+    <h2 class="q-title">How likely are you to actually buy me something?</h2>
+    <div class="options-grid" id="q4-options">
+      <button class="option-btn" onclick="selectQ4(this,'My favorite type of person. Please proceed immediately.')">
+        <span class="emoji">💸</span>Take my money
+      </button>
+      <button class="option-btn" onclick="selectQ4(this,'That \'maybe\' means yes. I\'m choosing to believe that.')">
+        <span class="emoji">🛒</span>Maybe
+      </button>
+      <button class="option-btn" onclick="selectQ4(this,'Studies show thinking about it is 0% effective. Just saying.')">
+        <span class="emoji">🤔</span>I'll think about it
+      </button>
+      <button class="option-btn" onclick="selectQ4(this,'Security has been notified. Please don\'t make this weird.')">
+        <span class="emoji">😶</span>Just browsing
+      </button>
+      <button class="option-btn" onclick="selectQ4(this,'Somehow ended up here by accident and now legally obligated to buy something. Welcome.')">
+        <span class="emoji">🏃</span>I came here accidentally
+      </button>
+    </div>
+    <div id="q4-response"></div>
+    <button class="btn-next" id="next-4" onclick="goTo(5)" disabled>Continue →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     SCREEN 5 — Describe me
+═══════════════════════════════════ -->
+<div class="screen" id="screen-5">
+  <div class="q-card">
+    <div class="step-indicator" id="steps-5"></div>
+    <div class="q-number">Question 05 / 05</div>
+    <h2 class="q-title">Pick one word that describes me ✨</h2>
+    <div class="options-grid" id="q5-options">
+      <button class="option-btn" onclick="selectQ5(this,'✨ Amazing','Accurate. We have good taste in common.')">
+        <span class="emoji">✨</span>Amazing
+      </button>
+      <button class="option-btn" onclick="selectQ5(this,'🎨 Creative','Correct. I contain multitudes.')">
+        <span class="emoji">🎨</span>Creative
+      </button>
+      <button class="option-btn" onclick="selectQ5(this,'😎 Cool','Cool? I\'m literally fighting for my life every semester. But sure.')">
+        <span class="emoji">😎</span>Cool
+      </button>
+      <button class="option-btn" onclick="selectQ5(this,'😂 Funny','Finally. Some honesty.')">
+        <span class="emoji">😂</span>Funny
+      </button>
+      <button class="option-btn" onclick="selectQ5(this,'🤯 Chaotic','...I felt that.')">
+        <span class="emoji">🤯</span>Chaotic
+      </button>
+    </div>
+    <div id="q5-response"></div>
+    <button class="btn-next" id="next-5" onclick="goToLoading()" disabled>See the wishlist 🎁</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     SCREEN 6 — LOADING
+═══════════════════════════════════ -->
+<div class="screen" id="screen-6" style="text-align:center;">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Running extensive scientific research...</div>
+</div>
+
+<!-- ═══════════════════════════════════
+     SCREEN 7 — RESULTS
+═══════════════════════════════════ -->
+<div class="screen" id="screen-7" style="flex-direction:column;padding-top:80px;padding-bottom:80px;gap:0;">
+  <div class="results-header">
+    <div class="results-eyebrow">🎂 The Verdict Is In</div>
+    <h2 class="results-title" id="resultsTitle">After extensive scientific research...</h2>
+    <p class="results-sub" id="resultsSub">Here's what I'd genuinely love. No pressure. (A little pressure.)</p>
+    <div id="personalizedNote" style="margin-top:16px;font-size:0.85rem;color:var(--accent);font-style:italic;"></div>
+  </div>
+  <div class="gifts-grid" id="giftsGrid"></div>
+
+  <!-- Change budget / restart -->
+  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:36px;max-width:480px;width:100%;">
+    <button class="btn-rerun" onclick="changeBudget()">↩ Wrong budget?</button>
+    <button class="btn-rerun secondary" onclick="restartQuiz()">↺ Start over</button>
+  </div>
+
+  <!-- Cash fallback -->
+  <div class="cash-section">
+    <p>Didn't find anything you liked?<br>Or maybe you're just a minimalist.</p>
+    <button class="btn-cash" onclick="revealCash()">Send Cash Instead 💸</button>
+    <div class="cash-reveal" id="cashReveal">
+      Cash is accepted in all currencies. Crypto too, if you're feeling chaotic. Venmo, UPI, Google Pay, carrier pigeon — I'm flexible. Just make it happen. 🕊️
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════
+// DATA
+// ══════════════════════════════════
+const gifts = [
+  // ── UNDER ₹500 ──
+  {
+    name: "Maybelline Sky High Mascara – Very Black",
+    desc: "The one everyone talks about. Lengthening, buildable, falsies-level volume without the drama.",
+    price: "₹449",
+    budget: "under500",
+    source: "Amazon",
+    link: "https://www.amazon.in/s?k=maybelline+sky+high+mascara+very+black"
+  },
+  {
+    name: "Dot & Key Vitamin C+E Strobe Cream",
+    desc: "Dewy glow that looks genuinely expensive. For the days I want to look hydrated and thriving.",
+    price: "₹276",
+    budget: "under500",
+    source: "Nykaa",
+    link: "https://www.nykaa.com/dot-key-vitamin-c-e-in-the-spotlight-strobe-cream/p/17091086?productId=17091086&pps=1&skuId=12620222"
+  },
+  {
+    name: "Swiss Beauty Long-Lasting Makeup Fixer",
+    desc: "Locks everything in place. No melting, no fading, no explaining. Just vibes that last.",
+    price: "₹289",
+    budget: "under500",
+    source: "Nykaa",
+    link: "https://www.nykaa.com/swiss-beauty-long-lasting-makeup-fixer-natural-1/p/367161?productId=367161&pps=1"
+  },
+  {
+    name: "MARS Mousse Matte Lipstick – Leading Lady",
+    desc: "A rich matte that doesn't dry out your lips. The shade is exactly what it sounds like.",
+    price: "Check price",
+    budget: "under500",
+    source: "Nykaa",
+    link: "https://www.nykaa.com/mars-mousse-matte-lipstick/p/18575487?productId=18575487&pps=16&skuId=18575469"
+  },
+  {
+    name: "FAE Beauty Trio Mini Peptide Glaws Gloss",
+    desc: "Three minis of the cult lip gloss. High shine, zero stickiness, peptides. For the lore.",
+    price: "₹650",
+    budget: "under500",
+    source: "Nykaa",
+    link: "https://www.nykaa.com/fae-beauty-mini-peptide-glaws-gloss/p/18489636?productId=18489636&pps=4"
+  },
+  {
+    name: "Typsy Beauty Pout Polish Lip Balm – Chocolate Fondant",
+    desc: "Peptide lip treatment that smells like dessert and makes your lips look like glazed art.",
+    price: "₹699",
+    budget: "under500",
+    source: "Nykaa",
+    link: "https://www.nykaa.com/typsy-beauty-pout-polish-peptide-lip-treatment-balm/p/17986176?productId=17986176&pps=1&skuId=17986175"
+  },
+  {
+    name: "Coloressence Coffee Coats Nail Paint Kit",
+    desc: "A whole mood in a kit. Warm coffee-toned shades plus a free nail paint remover. Yes.",
+    price: "Check price",
+    budget: "under500",
+    source: "Nykaa",
+    link: "https://www.nykaa.com/coloressence-coffee-coats-nail-paint-kit/p/21586527?productId=21586527&pps=5"
+  },
+  {
+    name: "Savana – 3D Shell & Metal Detail Artificial Nails",
+    desc: "Press-on nails with actual personality. Shell details, metal accents, zero effort.",
+    price: "Check price",
+    budget: "under500",
+    source: "Savana",
+    link: "https://www.savana.com/details/3d-shell-and-metal-detail-artificial-nails-1958772?vid=122&skcPGs=321814-422223"
+  },
+  {
+    name: "Mayklen 120Pcs Cluster Eyelashes Kit",
+    desc: "Salon-quality lash clusters at home. Bond, seal & tweezers included. No glue mess.",
+    price: "Check price",
+    budget: "under500",
+    source: "Amazon",
+    link: "https://www.amazon.in/Mayklen-Eyelashes-Extension-Clusters-Tweezers/dp/B0GW93LBFR"
+  },
+  // ── ₹500–1000 ──
+  {
+    name: "Makeup Brush Kit",
+    desc: "A full set that won't shed into your blush mid-application. The absolute bare minimum.",
+    price: "~₹699",
+    budget: "500-1000",
+    source: "Amazon",
+    link: "https://www.amazon.in/s?k=professional+makeup+brush+set+under+1000"
+  },
+  {
+    name: "Nykaa Eye Go Bare 9-in-1 Eyeshadow Palette",
+    desc: "Nudes to shimmers in one compact. The everyday-to-party transition palette I actually need.",
+    price: "₹719",
+    budget: "500-1000",
+    source: "Nykaa",
+    link: "https://www.nykaa.com/nykaa-cosmetics-eye-go-bare-9-in-1-eyeshadow-palette/p/20792068?productId=20792068&pps=4&skuId=17592368"
+  },
+  // ── ₹1000–2500 ──
+  {
+    name: "LazyBun Off-White Cargo Crossbody Bag",
+    desc: "Casual, functional, off-white. Carries all my stuff and looks intentional doing it.",
+    price: "₹1,499",
+    budget: "1000-2500",
+    source: "The Lazy Bun",
+    link: "https://thelazybun.com/products/off-white-cargo-bag"
+  },
+  {
+    name: "Off Duty Black Chrome Extra Wide Leg Jeans",
+    desc: "Wide-leg, chrome-finish, extra extra. The jeans that make an entrance before I do.",
+    price: "Check price",
+    budget: "1000-2500",
+    source: "Off Duty",
+    link: "https://offduty.in/products/black-chrome-extra-wide-leg-jeans"
+  },
+  {
+    name: "Savana – Tank Dress",
+    desc: "Effortless and cute. The kind of dress that works for literally everything.",
+    price: "~₹1,299",
+    budget: "1000-2500",
+    source: "Savana",
+    link: "https://www.savana.com/details/tank-dress-2173502?vid=3&skcPGs=357218-459658"
+  },
+  {
+    name: "Savana – Solid Satchel Bag",
+    desc: "Clean, structured, goes with everything. A bag that doesn't need to try hard.",
+    price: "Check price",
+    budget: "1000-2500",
+    source: "Savana",
+    link: "https://www.savana.com/details/solid-satchel-bag-1457162?vid=87&skcPGs=244017-393093,244016-393092,244015-393091"
+  },
+  // ── ₹5000+ ──
+  {
+    name: "Innioasis Y1 MP3 Player",
+    desc: "Click wheel, 128GB, 25–35hr battery, Bluetooth. iPod energy for 2025. I want it so bad.",
+    price: "₹5,099",
+    budget: "5000+",
+    source: "Amazon",
+    link: "https://www.amazon.in/Y1-Bluetooth-Innioasis-Version-Portable/dp/B0DKT9Z8JQ"
+  },
+  {
+    name: "Digicam – Point & Shoot",
+    desc: "Grainy, oversaturated, nostalgic. Every moment deserves to look like a memory already.",
+    price: "₹6,999+",
+    budget: "5000+",
+    source: "Amazon",
+    link: "https://www.amazon.in/s?k=digital+camera+point+and+shoot+vlogging"
+  }
+];
+
+// ══════════════════════════════════
+// STATE
+// ══════════════════════════════════
+let state = {
+  currentScreen: 0,
+  relation: '',
+  annoyance: 50,
+  budget: '',
+  likeliness: '',
+  word: '',
+  wordEmoji: ''
+};
+const totalQ = 5;
+
+// ══════════════════════════════════
+// BALLOONS
+// ══════════════════════════════════
+function makeBalloons(){
+  const c=document.getElementById('balloons');
+  const colors=['#a78bfa','#f472b6','#34d399','#fb923c','#60a5fa','#f9a8d4'];
+  for(let i=0;i<14;i++){
+    const b=document.createElement('div');
+    b.className='balloon';
+    b.style.left=Math.random()*100+'%';
+    b.style.color=colors[i%colors.length];
+    b.style.background=colors[i%colors.length];
+    b.style.animationDuration=(8+Math.random()*10)+'s';
+    b.style.animationDelay=(Math.random()*12)+'s';
+    b.style.width=(20+Math.random()*16)+'px';
+    b.style.height=(26+Math.random()*18)+'px';
+    c.appendChild(b);
+  }
+}
+makeBalloons();
+
+// ══════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════
+function goTo(n){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+n).classList.add('active');
+  state.currentScreen=n;
+  updateProgress(n);
+  updateBackBtn(n);
+  buildStepDots(n);
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(n===2) initAnnoy();
+}
+function goBack(){
+  if(state.currentScreen>1) goTo(state.currentScreen-1);
+  else goTo(0);
+}
+function updateProgress(n){
+  const pct=n===0?0:n===7?100:(n/totalQ)*100;
+  document.getElementById('progressBar').style.width=pct+'%';
+}
+function updateBackBtn(n){
+  document.getElementById('navBack').style.display=(n>0&&n<7)?'block':'none';
+}
+function buildStepDots(screen){
+  const el=document.getElementById('steps-'+screen);
+  if(!el)return;
+  el.innerHTML='';
+  for(let i=1;i<=totalQ;i++){
+    const d=document.createElement('div');
+    d.className='step-dot'+(i===screen?' active':i<screen?' done':'');
+    el.appendChild(d);
+  }
+}
+
+// ══════════════════════════════════
+// Q1
+// ══════════════════════════════════
+function selectQ1(btn,val,msg){
+  document.querySelectorAll('#q1-options .option-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.relation=val;
+  showResponse('q1-response',msg);
+  document.getElementById('next-1').disabled=false;
+}
+
+// ══════════════════════════════════
+// Q2 — Annoy Slider
+// ══════════════════════════════════
+function initAnnoy(){
+  updateAnnoy(50);
+}
+function updateAnnoy(v){
+  v=parseInt(v);state.annoyance=v;
+  document.getElementById('annoyVal').textContent=v;
+  const s=document.getElementById('annoySlider');
+  s.style.setProperty('--pct',v+'%');
+  const msgs=[
+    [0,20,"Suspiciously nice. I don't trust it, but I'll take it."],
+    [21,40,"I'll allow it. You get a pass. This year."],
+    [41,60,"We need to talk. Schedule a meeting with my feelings."],
+    [61,80,"You're on thin ice. Very, very thin ice."],
+    [81,100,"And you still expect a gift recommendation? Audacious. I respect it."]
+  ];
+  const m=msgs.find(([lo,hi])=>v>=lo&&v<=hi);
+  const r=document.getElementById('annoy-response');
+  r.textContent=m[2];r.style.display='block';
+}
+
+// ══════════════════════════════════
+// Q3 — Budget
+// ══════════════════════════════════
+const budgetResponses={
+  'under500':'Smart. I also appreciate symbolic gestures.',
+  '500-1000':'Respectable. Middle ground energy.',
+  '1000-2500':'Now we\'re talking. I see you.',
+  '5000+':'Wait— are you serious? I\'m putting you in my will.'
+};
+function selectBudget(btn,val){
+  document.querySelectorAll('#q3-options .option-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.budget=val;
+  showResponse('q3-response',budgetResponses[val]);
+  document.getElementById('next-3').disabled=false;
+}
+
+// ══════════════════════════════════
+// Q4
+// ══════════════════════════════════
+function selectQ4(btn,msg){
+  document.querySelectorAll('#q4-options .option-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.likeliness=msg;
+  showResponse('q4-response',msg);
+  document.getElementById('next-4').disabled=false;
+}
+
+// ══════════════════════════════════
+// Q5
+// ══════════════════════════════════
+function selectQ5(btn,word,msg){
+  document.querySelectorAll('#q5-options .option-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  state.word=word;
+  showResponse('q5-response',msg);
+  document.getElementById('next-5').disabled=false;
+}
+
+// ══════════════════════════════════
+// LOADING → RESULTS
+// ══════════════════════════════════
+function goToLoading(){
+  goTo(6);
+  const lines=[
+    'Running extensive scientific research...',
+    'Cross-referencing your vibe...',
+    'Consulting the gift oracle...',
+    'Calculating how much you owe me...',
+    'Finalizing the list. No turning back.'
+  ];
+  let i=0;
+  const el=document.getElementById('loadingText');
+  const iv=setInterval(()=>{
+    i++;
+    if(i<lines.length){el.style.opacity=0;setTimeout(()=>{el.textContent=lines[i];el.style.opacity=1;},300);}
+    else{clearInterval(iv);setTimeout(showResults,600);}
+  },900);
+}
+
+function showResults(){
+  goTo(7);
+  renderGifts();
+  buildPersonalizedNote();
+  setTimeout(fireConfetti,400);
+}
+
+function renderGifts(){
+  const grid=document.getElementById('giftsGrid');
+  grid.innerHTML='';
+  const filtered=gifts.filter(g=>g.budget===state.budget);
+  filtered.forEach(g=>{
+    const card=document.createElement('div');
+    card.className='gift-card';
+    card.innerHTML=`
+      <div class="gift-body">
+        <div class="gift-source">${g.source||'Shop'}</div>
+        <div class="gift-price">${g.price}</div>
+        <div class="gift-name">${g.name}</div>
+        <div class="gift-desc">${g.desc}</div>
+        <a class="btn-buy" href="${g.link}" target="_blank" rel="noopener">Buy Now →</a>
+      </div>`;
+    grid.appendChild(card);
+  });
+  if(!filtered.length){
+    grid.innerHTML='<div style="text-align:center;color:var(--text-muted);padding:40px;grid-column:1/-1;">Hmm, something went sideways. Maybe just send cash.</div>';
+  }
+}
+
+function buildPersonalizedNote(){
+  const rel=state.relation;
+  const word=state.word.replace(/[^ ]+ /,'');
+  const notes={
+    'Best Friend':`You already know my taste, ${rel.toLowerCase()}. This is just a formality.`,
+    'Partner':'Honestly just seeing this list in action is a love language.',
+    'Sibling':"Sibling tax has been waived. For today only.",
+    'Parent':'You raised a person with impeccable taste. This is just proof.',
+    'Friend':'The fact you showed up counts for a lot. The gift is just a bonus.',
+    'Acquaintance':'You genuinely surprised me by being here. In a good way.',
+    'Internet Friend':"We may have never met but your contribution will be remembered."
+  };
+  const note=notes[rel]||'';
+  document.getElementById('personalizedNote').textContent=note+(word?` Also — ${word}? You clearly get me.`:'');
+  document.getElementById('resultsTitle').textContent='After extensive scientific research...';
+  document.getElementById('resultsSub').textContent=`Here's what I'd genuinely love. No pressure. (A little pressure.)`;
+}
+
+// ══════════════════════════════════
+// CONFETTI
+// ══════════════════════════════════
+function fireConfetti(){
+  const colors=['#a78bfa','#f472b6','#34d399','#fb923c','#60a5fa','#fbbf24','#f9a8d4'];
+  for(let i=0;i<100;i++){
+    const el=document.createElement('div');
+    el.className='confetti-piece';
+    el.style.cssText=`
+      left:${Math.random()*100}vw;
+      top:${-Math.random()*40}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      border-radius:${Math.random()>0.5?'50%':'2px'};
+      width:${6+Math.random()*6}px;
+      height:${6+Math.random()*6}px;
+      animation-duration:${1.5+Math.random()*2}s;
+      animation-delay:${Math.random()*0.8}s;
+    `;
+    document.body.appendChild(el);
+    el.addEventListener('animationend',()=>el.remove());
+  }
+}
+
+// ══════════════════════════════════
+// CASH
+// ══════════════════════════════════
+function changeBudget(){
+  state.budget='';
+  document.querySelectorAll('#q3-options .option-btn').forEach(b=>b.classList.remove('selected'));
+  document.getElementById('q3-response').innerHTML='';
+  document.getElementById('next-3').disabled=true;
+  goTo(3);
+}
+function restartQuiz(){
+  state={currentScreen:0,relation:'',annoyance:50,budget:'',likeliness:'',word:'',wordEmoji:''};
+  document.querySelectorAll('.option-btn').forEach(b=>b.classList.remove('selected'));
+  ['q1-response','q3-response','q4-response','q5-response'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.innerHTML='';
+  });
+  document.getElementById('next-1').disabled=true;
+  document.getElementById('next-3').disabled=true;
+  document.getElementById('next-4').disabled=true;
+  document.getElementById('next-5').disabled=true;
+  document.getElementById('cashReveal').style.display='none';
+  goTo(0);
+}
+function revealCash(){
+  const r=document.getElementById('cashReveal');
+  r.style.display='block';
+}
+
+// ══════════════════════════════════
+// UTILS
+// ══════════════════════════════════
+function showResponse(id,msg){
+  const el=document.getElementById(id);
+  el.className='response-chip';
+  el.textContent='✦ '+msg;
+  el.style.display='block';
+  void el.offsetWidth;
+  el.className='response-chip';
+}
+</script>
+</body>
+</html>
